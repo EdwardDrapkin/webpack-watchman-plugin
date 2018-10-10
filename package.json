@@ -9,7 +9,6 @@
     "flow": "flow",
     "format": "eslint --fix src test",
     "lint": "eslint src test",
-    "precommit": "yarn run flow && lint-staged",
     "prepublish": "yarn run clean && cross-env NODE_ENV=production yarn run build",
     "preversion": "yarn test",
     "test": "jest",
@@ -90,5 +89,10 @@
     "roots": [
       "<rootDir>/src/"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run flow && lint-staged"
+    }
   }
 }
