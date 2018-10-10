@@ -1,6 +1,7 @@
 /* @flow */
 import createDebug from 'debug';
 import Watchman from './WatchmanConnector';
+import objectToMap from './utils/objectToMap';
 
 const debug = createDebug('watchman:filesystem');
 
@@ -10,8 +11,8 @@ type Callback = (
     files: Array<string>,
     dirs: Array<string>,
     missing: Array<string>,
-    filetimes: { [key: string]: number },
-    dirtimes: { [key: string]: number },
+    filetimes: Map<string, number>,
+    dirtimes: Map<string, number>,
 ) => void;
 
 export default class WatchmanWatchFileSystem {
@@ -33,7 +34,12 @@ export default class WatchmanWatchFileSystem {
         options: Object,
         callback: Callback,
         callbackUndelayed: (file: string, mtime: number) => void,
-    ): { close: Function, pause: Function } {
+    ): {
+        close: Function,
+        pause: Function,
+        getFileTimestamps: () => Map<string, number>,
+        getContextTimestamps: () => Map<string, number>,
+    } {
         if (!Array.isArray(files)) throw new Error("Invalid arguments: 'files'");
         if (!Array.isArray(dirs)) throw new Error("Invalid arguments: 'dirs'");
         if (!Array.isArray(missing)) {
@@ -73,7 +79,7 @@ export default class WatchmanWatchFileSystem {
                 this.inputFileSystem.purge(allChanges);
             }
 
-            const times = watcher.getTimes();
+            const times = objectToMap(watcher.getTimes());
 
             callback(
                 null,
@@ -101,6 +107,18 @@ export default class WatchmanWatchFileSystem {
             },
             pause: () => {
                 if (this.watcher) this.watcher.pause();
+            },
+            getFileTimestamps: () => {
+                if (this.watcher) {
+                    return objectToMap(this.watcher.getTimes());
+                }
+                return new Map();
+            },
+            getContextTimestamps: () => {
+                if (this.watcher) {
+                    return objectToMap(this.watcher.getTimes());
+                }
+                return new Map();
             },
         };
     }

@@ -2,7 +2,9 @@
 import path from 'path';
 import fs from 'fs-extra';
 import WatchmanConnector from '../WatchmanConnector';
+import WatchmanWatchFileSystem from '../WatchmanWatchFileSystem';
 import TestHelper from '../../test/TestHelper';
+import {get} from '../utils/fsAccuracy';
 
 const tempPath = path.join(__dirname, '../../test/temp');
 
@@ -110,5 +112,56 @@ describe('WatchmanConnector', () => {
                 connector.watch([filePath], [], oldDate);
             });
         }, 1000);
+    });
+});
+
+describe('WatchmanPlugin', () => {
+    let filesystem;
+    let connector;
+    let projectPath;
+    let testHelper;
+
+    beforeEach(() => {
+        const pathName = Math.floor(Math.random() * 10000000000 + new Date().getTime());
+        projectPath = path.join(tempPath, pathName.toString());
+        filesystem = new WatchmanWatchFileSystem({ projectPath });
+        connector = new WatchmanConnector({ projectPath });
+        testHelper = new TestHelper(projectPath);
+
+        return new Promise(resolve => testHelper.before(resolve));
+    });
+
+    afterEach(() => {
+        connector.close();
+
+        return new Promise(resolve => testHelper.after(resolve));
+    });
+
+    afterAll(() => {
+        return new Promise(resolve => fs.remove(tempPath, resolve));
+    });
+
+    test('timestamps are emitted as a Map', done => {
+        expect.assertions(2);
+        const filename = TestHelper.generateFilename();
+        const filePath = path.join(projectPath, filename);
+        filesystem.watch(
+            [filePath],
+            [],
+            [],
+            Date.now(),
+            { projectPath },
+            (err, files, dirs, missing, filetimes, dirtimes) => {
+                expect(filetimes).toEqual(expect.any(Map));
+                expect(dirtimes).toEqual(expect.any(Map));
+                done();
+            },
+        );
+        testHelper.file(filename, () => {
+            // timeout so the new file is not picked up as change
+            TestHelper.tick(() => {
+                testHelper.mtime(filename, Date.now());
+            }, 1000);
+        });
     });
 });
