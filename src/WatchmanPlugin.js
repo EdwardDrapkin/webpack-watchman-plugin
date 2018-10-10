@@ -18,8 +18,7 @@ export default class WatchmanPlugin {
     }
 
     apply(compiler: Object): void {
-        compiler.plugin('environment', () => {
-            debug('creating new filesystem');
+        compiler.hooks.afterEnvironment.tap('WatchmanPlugin', () => {
             compiler.watchFileSystem = new WatchFileSystem(compiler.inputFileSystem, this.options); // eslint-disable-line no-param-reassign
         });
     }
