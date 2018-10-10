@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/researchgate/webpack-watchman-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/researchgate/webpack-watchman-plugin)
 
 
-> This plugin was tested with webpack 1, 2 and 3 and watchman 4.5+.
+> This plugin was tested with Webpack 4 and watchman 4.5+.
 
 ## Usage
 
