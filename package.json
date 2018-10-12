@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf lib",
-    "build": "babel src --out-dir lib --ignore __tests__",
+    "build": "node_modules/.bin/babel src --out-dir lib --ignore __tests__",
     "flow": "flow",
     "format": "eslint --fix src test",
     "lint": "eslint src test",
