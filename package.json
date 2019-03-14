@@ -40,6 +40,7 @@
   },
   "homepage": "https://github.com/researchgate/webpack-watchman-plugin#readme",
   "devDependencies": {
+    "@researchgate/eslint-config-rg-node-babel": "^4.0.0",
     "babel-eslint": "^8.2.1",
     "eslint": "^5.0.0",
     "eslint-config-prettier": "^2.4.0",
@@ -53,12 +54,11 @@
     "prettier": "^1.6.1"
   },
   "dependencies": {
-    "@researchgate/eslint-config-rg-node-babel": "^4.0.0",
-    "async": "^2.0.0",
     "babel-cli": "^6.9.0",
     "babel-plugin-transform-class-properties": "^6.23.0",
     "babel-preset-env": "^1.2.1",
     "babel-preset-flow": "^6.23.0",
+    "async": "^2.0.0",
     "cross-env": "^5.0.0",
     "debug": "^3.0.0",
     "fb-watchman": "^2.0.0",
